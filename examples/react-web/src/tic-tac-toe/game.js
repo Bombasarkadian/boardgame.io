@@ -49,6 +49,17 @@ const TicTacToe = {
         return { ...G, cells };
       }
     },
+
+    move: (G, ctx, args) => {
+      const cells = [...G.cells];
+
+      const { id } = args.target.data;
+
+      if (cells[id] === null) {
+        cells[id] = ctx.currentPlayer;
+        return { ...G, cells };
+      }
+    },
   },
 
   turn: {

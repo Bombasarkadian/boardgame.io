@@ -18,6 +18,7 @@
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.6.2",
     "@babel/preset-react": "^7.0.0",
+    "bgio-ui": "file:../../../svg",
     "chess.js": "^0.10.2",
     "parcel-plugin-svelte": "^4.0.4",
     "react": "^16.9.0",
