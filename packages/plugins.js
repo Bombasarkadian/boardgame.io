@@ -7,5 +7,6 @@
  */
 
 import PluginPlayer from '../src/plugins/plugin-player';
+import PluginUI from '../src/plugins/plugin-ui';
 
-export { PluginPlayer };
+export { PluginPlayer, PluginUI };
