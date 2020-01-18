@@ -6,6 +6,9 @@
  * https://opensource.org/licenses/MIT.
  */
 
+import { API, ActionRecorder } from 'bgio-ui';
+import { schema, state } from './ui-schema';
+
 function IsVictory(cells) {
   const positions = [
     [0, 1, 2],
@@ -33,12 +36,31 @@ function IsVictory(cells) {
   return false;
 }
 
+const PluginUI = {
+  fnWrap: moveFn => {
+    return (G, ctx, ...args) => {
+      const actionRecorder = new ActionRecorder();
+      const api = API(schema, G._state, actionRecorder);
+      ctx = { ...ctx, api };
+      G = moveFn(G, ctx, ...args);
+      G = {
+        ...G,
+        _actions: [...(G._actions || []), ...actionRecorder.actions],
+      };
+      return G;
+    };
+  },
+};
+
 const TicTacToe = {
   name: 'tic-tac-toe',
 
   setup: () => ({
     cells: new Array(9).fill(null),
+    _state: state,
   }),
+
+  plugins: [PluginUI],
 
   moves: {
     clickCell(G, ctx, id) {
@@ -50,15 +72,12 @@ const TicTacToe = {
       }
     },
 
-    move: (G, ctx, args) => {
-      const cells = [...G.cells];
-
-      const { id } = args.target.data;
-
-      if (cells[id] === null) {
-        cells[id] = ctx.currentPlayer;
-        return { ...G, cells };
-      }
+    move: (G, ctx, { obj }) => {
+      const symbol = ctx.currentPlayer === '0' ? 'O' : 'X';
+      ctx.api
+        .object('point-' + symbol)
+        .top()
+        .addTo(obj);
     },
   },
 
