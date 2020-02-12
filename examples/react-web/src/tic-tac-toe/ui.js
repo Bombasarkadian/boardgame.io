@@ -16,17 +16,6 @@ import TicTacToe from './game';
 const client = Client({
   game: TicTacToe,
   debug: { impl: Debug },
-  ai: {
-    enumerate: G => {
-      let r = [];
-      for (let i = 0; i < 9; i++) {
-        if (G.cells[i] === null) {
-          r.push({ move: 'clickCell', args: [i] });
-        }
-      }
-      return r;
-    },
-  },
 });
 
 class UI extends React.Component {
@@ -34,7 +23,7 @@ class UI extends React.Component {
     const svg = Init(schema, state, client);
 
     client.subscribe(({ G }) => {
-      const actionRecorder = new ActionRecorder(G._actions);
+      const actionRecorder = ActionRecorder.fromActions(G._ui.actions);
       actionRecorder.applyToSvg(svg);
     });
 

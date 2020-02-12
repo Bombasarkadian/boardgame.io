@@ -40,13 +40,19 @@ const PluginUI = {
   fnWrap: moveFn => {
     return (G, ctx, ...args) => {
       const actionRecorder = new ActionRecorder();
-      const api = API(schema, G._state, actionRecorder);
+      const api = API(schema, G._ui.state, actionRecorder);
       ctx = { ...ctx, api };
+
       G = moveFn(G, ctx, ...args);
+
       G = {
         ...G,
-        _actions: [...(G._actions || []), ...actionRecorder.actions],
+        _ui: {
+          actions: [...G._ui.actions, ...actionRecorder.getActions()],
+          state: actionRecorder.applyToState(G._ui.state),
+        },
       };
+
       return G;
     };
   },
@@ -57,7 +63,10 @@ const TicTacToe = {
 
   setup: () => ({
     cells: new Array(9).fill(null),
-    _state: state,
+    _ui: {
+      state,
+      actions: [],
+    },
   }),
 
   plugins: [PluginUI],
