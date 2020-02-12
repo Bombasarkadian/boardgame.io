@@ -13,6 +13,24 @@ import PluginImmer from './plugin-immer';
  */
 const DEFAULT_PLUGINS = [PluginImmer];
 
+export const OnMove = (state, plugins) => {
+  [...DEFAULT_PLUGINS, ...plugins]
+    .filter(plugin => plugin.onMove !== undefined)
+    .forEach(plugin => {
+      state = plugin.onMove(state);
+    });
+  return state;
+};
+
+export const OnEvent = (state, plugins) => {
+  [...DEFAULT_PLUGINS, ...plugins]
+    .filter(plugin => plugin.onEvent !== undefined)
+    .forEach(plugin => {
+      state = plugin.onEvent(state);
+    });
+  return state;
+};
+
 /**
  * Applies the provided plugins to ctx before processing a move / event.
  *
