@@ -19,15 +19,19 @@ const client = Client({
 });
 
 class UI extends React.Component {
+  // TODO:
+  // Everything inside this function can go into the
+  // implementation of a new UIClient class.
   componentDidMount() {
+    client.start();
+
+    const state = client.getState().G._ui.state;
     const svg = Init(schema, state, client);
 
     client.subscribe(({ G }) => {
       const actionRecorder = ActionRecorder.fromActions(G._ui.actions);
       actionRecorder.applyToSvg(svg);
     });
-
-    client.start();
   }
 
   render() {

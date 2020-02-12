@@ -36,6 +36,11 @@ function IsVictory(cells) {
   return false;
 }
 
+// TODO:
+// - store ActionRecorder as a global in the plugin
+// - call applyToState at the end of all triggers after
+//   a move / event. This may require adding some new
+//   plugin related code in flow.js or reducer.js.
 const PluginUI = {
   fnWrap: moveFn => {
     return (G, ctx, ...args) => {
