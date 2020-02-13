@@ -727,8 +727,6 @@ export function Flow({ moves, phases, endIf, turn, events, plugins }) {
 
     state = Process(state, events);
 
-    state = plugin.OnMove(state, plugins);
-
     return state;
   }
 
@@ -824,7 +822,6 @@ export function Flow({ moves, phases, endIf, turn, events, plugins }) {
     if (eventHandlers.hasOwnProperty(type)) {
       const eventArgs = [state, playerID].concat(args);
       state = eventHandlers[type].apply({}, eventArgs);
-      state = plugin.OnEvent(state, plugins);
       return state;
     }
     return state;

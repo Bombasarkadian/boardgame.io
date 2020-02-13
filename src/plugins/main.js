@@ -13,20 +13,38 @@ import PluginImmer from './plugin-immer';
  */
 const DEFAULT_PLUGINS = [PluginImmer];
 
-export const OnMove = (state, plugins) => {
+export const BeforeMove = (state, plugins) => {
   [...DEFAULT_PLUGINS, ...plugins]
-    .filter(plugin => plugin.onMove !== undefined)
+    .filter(plugin => plugin.beforeMove !== undefined)
     .forEach(plugin => {
-      state = plugin.onMove(state);
+      state = plugin.beforeMove(state);
     });
   return state;
 };
 
-export const OnEvent = (state, plugins) => {
+export const BeforeEvent = (state, plugins) => {
   [...DEFAULT_PLUGINS, ...plugins]
-    .filter(plugin => plugin.onEvent !== undefined)
+    .filter(plugin => plugin.beforeEvent !== undefined)
     .forEach(plugin => {
-      state = plugin.onEvent(state);
+      state = plugin.beforeEvent(state);
+    });
+  return state;
+};
+
+export const AfterMove = (state, plugins) => {
+  [...DEFAULT_PLUGINS, ...plugins]
+    .filter(plugin => plugin.afterMove !== undefined)
+    .forEach(plugin => {
+      state = plugin.afterMove(state);
+    });
+  return state;
+};
+
+export const AfterEvent = (state, plugins) => {
+  [...DEFAULT_PLUGINS, ...plugins]
+    .filter(plugin => plugin.afterEvent !== undefined)
+    .forEach(plugin => {
+      state = plugin.afterEvent(state);
     });
   return state;
 };

@@ -36,6 +36,34 @@ function IsVictory(cells) {
   return false;
 }
 
+const Reset = state => {
+  return state;
+  return {
+    ...state,
+    G: {
+      ...state.G,
+      _ui: {
+        ...state.G._ui,
+        actions: [],
+      },
+    },
+  };
+};
+
+const UpdateState = state => {
+  const actionRecorder = ActionRecorder.fromActions(state.G._ui.actions);
+  return {
+    ...state,
+    G: {
+      ...state.G,
+      _ui: {
+        ...state.G._ui,
+        state: actionRecorder.applyToState(state.G._ui.state),
+      },
+    },
+  };
+};
+
 const PluginUI = {
   fnWrap: moveFn => {
     return (G, ctx, ...args) => {
@@ -57,34 +85,10 @@ const PluginUI = {
     };
   },
 
-  onMove: state => {
-    const actionRecorder = ActionRecorder.fromActions(state.G._ui.actions);
-    return {
-      ...state,
-      G: {
-        ...state.G,
-        _ui: {
-          ...state.G._ui,
-          actions: [],
-          state: actionRecorder.applyToState(state.G._ui.state),
-        },
-      },
-    };
-  },
-
-  onEvent: state => {
-    const actionRecorder = ActionRecorder.fromActions(state.G._ui.actions);
-    return {
-      ...state,
-      G: {
-        ...state.G,
-        _ui: {
-          ...state.G._ui,
-          actions: [],
-        },
-      },
-    };
-  },
+  beforeMove: Reset,
+  beforeEvent: Reset,
+  afterMove: UpdateState,
+  afterEvent: UpdateState,
 };
 
 const TicTacToe = {

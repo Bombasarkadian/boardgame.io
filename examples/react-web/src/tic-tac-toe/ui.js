@@ -30,6 +30,7 @@ class UI extends React.Component {
 
     client.subscribe(({ G }) => {
       const actionRecorder = ActionRecorder.fromActions(G._ui.actions);
+      console.log(G._ui);
       actionRecorder.applyToSvg(svg);
     });
   }
