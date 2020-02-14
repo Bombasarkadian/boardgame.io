@@ -721,9 +721,7 @@ export function Flow({ moves, phases, endIf, turn, events, plugins }) {
 
     let events = [{ fn: OnMove }];
 
-    state = Process(state, events);
-
-    return state;
+    return Process(state, events);
   }
 
   function SetStageEvent(state, playerID, arg) {
@@ -817,8 +815,7 @@ export function Flow({ moves, phases, endIf, turn, events, plugins }) {
     const { type, playerID, args } = action.payload;
     if (eventHandlers.hasOwnProperty(type)) {
       const eventArgs = [state, playerID].concat(args);
-      state = eventHandlers[type].apply({}, eventArgs);
-      return state;
+      return eventHandlers[type].apply({}, eventArgs);
     }
     return state;
   }
