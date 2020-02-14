@@ -16,6 +16,10 @@ import { Transport } from './transport';
  * Otherwise, returns a playerID of a bot that may play now.
  */
 export function GetBotPlayer(state, bots) {
+  if (state.ctx.gameover !== undefined) {
+    return null;
+  }
+
   if (state.ctx.stage) {
     for (const key of Object.keys(bots)) {
       if (key in state.ctx.stage) {
@@ -69,7 +73,7 @@ export function LocalMaster({ game, bots }) {
     clientCallbacks[playerID] = callback;
   };
 
-  master.onUpdateCallback = ({ state, gameID }) => {
+  master.subscribe(({ state, gameID }) => {
     if (!bots) {
       return;
     }
@@ -88,7 +92,7 @@ export function LocalMaster({ game, bots }) {
         );
       }, 100);
     }
-  };
+  });
 
   return master;
 }
