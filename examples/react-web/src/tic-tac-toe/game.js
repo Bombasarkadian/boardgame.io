@@ -6,8 +6,8 @@
  * https://opensource.org/licenses/MIT.
  */
 
-import { API, ActionRecorder } from 'bgio-ui';
-import { schema, state } from './ui-schema';
+import { state } from './ui-schema';
+import { PluginUI } from './plugin-ui';
 
 function IsVictory(cells) {
   const positions = [
@@ -36,73 +36,14 @@ function IsVictory(cells) {
   return false;
 }
 
-const Reset = state => {
-  return state;
-  return {
-    ...state,
-    G: {
-      ...state.G,
-      _ui: {
-        ...state.G._ui,
-        actions: [],
-      },
-    },
-  };
-};
-
-const UpdateState = state => {
-  const actionRecorder = ActionRecorder.fromActions(state.G._ui.actions);
-  return {
-    ...state,
-    G: {
-      ...state.G,
-      _ui: {
-        ...state.G._ui,
-        state: actionRecorder.applyToState(state.G._ui.state),
-      },
-    },
-  };
-};
-
-const PluginUI = {
-  fnWrap: moveFn => {
-    return (G, ctx, ...args) => {
-      const actionRecorder = new ActionRecorder();
-      const api = API(schema, G._ui.state, actionRecorder);
-      ctx = { ...ctx, api };
-
-      G = moveFn(G, ctx, ...args);
-
-      G = {
-        ...G,
-        _ui: {
-          ...G._ui,
-          actions: [...G._ui.actions, ...actionRecorder.getActions()],
-        },
-      };
-
-      return G;
-    };
-  },
-
-  beforeMove: Reset,
-  beforeEvent: Reset,
-  afterMove: UpdateState,
-  afterEvent: UpdateState,
-};
-
 const TicTacToe = {
   name: 'tic-tac-toe',
 
   setup: () => ({
     cells: new Array(9).fill(null),
-    _ui: {
-      state,
-      actions: [],
-    },
   }),
 
-  plugins: [PluginUI],
+  plugins: [PluginUI(state)],
 
   moves: {
     clickCell(G, ctx, id) {
