@@ -21,7 +21,7 @@ function IsVictory(api) {
     [2, 4, 6],
   ];
 
-  const rowResult = row => {
+  const isRowComplete = row => {
     const symbols = row.map(i => {
       const id = `point-${i + 1}`;
       const card = api.object(id).top();
@@ -31,7 +31,7 @@ function IsVictory(api) {
     return symbols.every(s => s !== null && s === symbols[0]);
   };
 
-  return positions.map(rowResult).some(v => v === true);
+  return positions.map(isRowComplete).some(i => i === true);
 }
 
 const TicTacToe = {
