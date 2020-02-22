@@ -91,6 +91,7 @@ export function CreateGameReducer({ game, multiplayer }) {
 
         // Execute plugins.
         state = plugin.BeforeEvent(state, game.plugins);
+        state.ctx = plugin.Enhance.ctx(state.G, state.ctx, game);
 
         // Process event.
         let newState = game.flow.processEvent(state, action);
@@ -146,6 +147,7 @@ export function CreateGameReducer({ game, multiplayer }) {
 
         // Execute plugins.
         state = plugin.BeforeMove(state, game.plugins);
+        ctxWithAPI = plugin.Enhance.ctx(state.G, ctxWithAPI, game);
 
         // Process the move.
         let G = game.processMove(state.G, action.payload, ctxWithAPI);
@@ -202,6 +204,7 @@ export function CreateGameReducer({ game, multiplayer }) {
 
         // Allow the flow reducer to process any triggers that happen after moves.
         ctxWithAPI = apiCtx.attachToContext(state.ctx);
+        ctxWithAPI = plugin.Enhance.ctx(state.G, ctxWithAPI, game);
         state = game.flow.processMove(
           { ...state, ctx: ctxWithAPI },
           action.payload

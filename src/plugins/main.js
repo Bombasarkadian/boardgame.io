@@ -13,6 +13,18 @@ import PluginImmer from './plugin-immer';
  */
 const DEFAULT_PLUGINS = [PluginImmer];
 
+export const Enhance = {
+  ctx: (G, ctx, game) => {
+    [...DEFAULT_PLUGINS, ...game.plugins]
+      .filter(plugin => plugin.enhance !== undefined)
+      .filter(plugin => plugin.enhance.ctx !== undefined)
+      .forEach(plugin => {
+        ctx = plugin.enhance.ctx(G, ctx, game);
+      });
+    return ctx;
+  },
+};
+
 export const Setup = {
   /**
    * Applies the provided plugins to G during game setup.

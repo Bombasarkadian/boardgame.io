@@ -9,7 +9,7 @@
 import { state } from './ui-schema';
 import { PluginUI } from './plugin-ui';
 
-function IsVictory(cells) {
+function IsVictory(api) {
   const positions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -21,19 +21,17 @@ function IsVictory(cells) {
     [2, 4, 6],
   ];
 
-  for (let pos of positions) {
-    const symbol = cells[pos[0]];
-    let winner = symbol;
-    for (let i of pos) {
-      if (cells[i] != symbol) {
-        winner = null;
-        break;
-      }
-    }
-    if (winner != null) return true;
-  }
+  const rowResult = row => {
+    const symbols = row.map(i => {
+      const id = `point-${i + 1}`;
+      const card = api.object(id).top();
+      return card ? card.opts().text : null;
+    });
 
-  return false;
+    return symbols.every(s => s !== null && s === symbols[0]);
+  };
+
+  return positions.map(rowResult).some(v => v === true);
 }
 
 const TicTacToe = {
@@ -46,15 +44,6 @@ const TicTacToe = {
   plugins: [PluginUI(state)],
 
   moves: {
-    clickCell(G, ctx, id) {
-      const cells = [...G.cells];
-
-      if (cells[id] === null) {
-        cells[id] = ctx.currentPlayer;
-        return { ...G, cells };
-      }
-    },
-
     move: (G, ctx, { obj }) => {
       const symbol = ctx.currentPlayer === '0' ? 'O' : 'X';
       ctx.api
@@ -69,7 +58,7 @@ const TicTacToe = {
   },
 
   endIf: (G, ctx) => {
-    if (IsVictory(G.cells)) {
+    if (IsVictory(ctx.api)) {
       return { winner: ctx.currentPlayer };
     }
     if (G.cells.filter(c => c === null).length == 0) {

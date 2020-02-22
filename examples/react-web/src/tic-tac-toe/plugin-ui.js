@@ -40,24 +40,31 @@ export const PluginUI = initialState => ({
     },
   },
 
-  fnWrap: moveFn => {
-    return (G, ctx, ...args) => {
+  enhance: {
+    ctx: (G, ctx) => {
       const actionRecorder = new ActionRecorder();
       const api = API(schema, G._ui.state, actionRecorder);
-      ctx = { ...ctx, api };
+      return { ...ctx, api };
+    },
+  },
+
+  fnWrap: moveFn => {
+    return (G, ctx, ...args) => {
       G = moveFn(G, ctx, ...args);
-      G = {
+      return {
         ...G,
         _ui: {
           ...G._ui,
-          actions: [...G._ui.actions, ...actionRecorder.getActions()],
+          actions: [...G._ui.actions, ...ctx.api._actionRecorder.getActions()],
         },
       };
-      return G;
     };
   },
   beforeMove: Reset,
   beforeEvent: Reset,
+
+  // TODO: Changes to state need to be applied earlier so that triggers after
+  // the move can see the state changes.
   afterMove: UpdateState,
   afterEvent: UpdateState,
 });

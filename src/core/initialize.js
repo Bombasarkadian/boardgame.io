@@ -61,6 +61,7 @@ export function InitializeGame({ game, numPlayers, setupData }) {
     _initial: {},
   };
 
+  ctxWithAPI = plugins.Enhance.ctx(initial.G, ctxWithAPI, game);
   let state = game.flow.init({ G: initial.G, ctx: ctxWithAPI });
 
   initial.G = state.G;
