@@ -6,8 +6,8 @@
  * https://opensource.org/licenses/MIT.
  */
 
-import { state } from './ui-schema';
-import { PluginUI } from './plugin-ui';
+import { schema, state } from './ui-schema';
+import { PluginSandbox } from 'bgio-sandbox';
 
 function IsVictory(api) {
   const positions = [
@@ -41,7 +41,9 @@ const TicTacToe = {
     cells: new Array(9).fill(null),
   }),
 
-  plugins: [PluginUI(state)],
+  // TODO: Don't pass state in but create it in the setup
+  // function via an API instead.
+  plugins: [PluginSandbox(schema, state)],
 
   moves: {
     move: (G, ctx, { obj }) => {

@@ -7,8 +7,8 @@
  */
 
 import React from 'react';
+import { Init, ApplyActions } from 'bgio-ui';
 import { Client } from 'boardgame.io/client';
-import { Init, ActionRecorder } from 'bgio-ui';
 import { schema } from './ui-schema';
 import { Debug } from 'boardgame.io/debug';
 import TicTacToe from './game';
@@ -29,8 +29,7 @@ class UI extends React.Component {
     const svg = Init(schema, state, client);
 
     client.subscribe(({ G }) => {
-      const actionRecorder = ActionRecorder.fromActions(G._ui.actions);
-      actionRecorder.applyToSvg(svg);
+      ApplyActions(svg, G._ui.actions);
     });
   }
 

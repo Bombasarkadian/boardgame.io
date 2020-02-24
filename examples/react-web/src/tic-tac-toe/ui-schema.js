@@ -1,4 +1,4 @@
-import { ObjectType } from 'bgio-ui';
+import { ObjectType } from 'bgio-sandbox';
 
 export const schema = {
   'card-O1': { type: ObjectType.CARD, opts: { text: 'O' } },
