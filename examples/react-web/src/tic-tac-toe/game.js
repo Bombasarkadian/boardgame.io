@@ -6,7 +6,10 @@
  * https://opensource.org/licenses/MIT.
  */
 
-function IsVictory(cells) {
+import { schema, state } from './ui-schema';
+import { PluginSandbox } from 'bgio-sandbox';
+
+function IsVictory(api) {
   const positions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -19,8 +22,13 @@ function IsVictory(cells) {
   ];
 
   const isRowComplete = row => {
-    const symbols = row.map(i => cells[i]);
-    return symbols.every(i => i !== null && i === symbols[0]);
+    const symbols = row.map(i => {
+      const id = `point-${i + 1}`;
+      const card = api.object(id).top();
+      return card ? card.opts().text : null;
+    });
+
+    return symbols.every(s => s !== null && s === symbols[0]);
   };
 
   return positions.map(isRowComplete).some(i => i === true);
@@ -33,14 +41,17 @@ const TicTacToe = {
     cells: new Array(9).fill(null),
   }),
 
-  moves: {
-    clickCell(G, ctx, id) {
-      const cells = [...G.cells];
+  // TODO: Don't pass state in but create it in the setup
+  // function via an API instead.
+  plugins: [PluginSandbox(schema, state)],
 
-      if (cells[id] === null) {
-        cells[id] = ctx.currentPlayer;
-        return { ...G, cells };
-      }
+  moves: {
+    move: (G, ctx, { obj }) => {
+      const symbol = ctx.currentPlayer === '0' ? 'O' : 'X';
+      ctx.api
+        .object('point-' + symbol)
+        .top()
+        .addTo(obj);
     },
   },
 
@@ -49,7 +60,7 @@ const TicTacToe = {
   },
 
   endIf: (G, ctx) => {
-    if (IsVictory(G.cells)) {
+    if (IsVictory(ctx.api)) {
       return { winner: ctx.currentPlayer };
     }
     if (G.cells.filter(c => c === null).length == 0) {

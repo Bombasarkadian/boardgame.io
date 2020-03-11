@@ -9,6 +9,7 @@
 import Singleplayer from './singleplayer';
 import Multiplayer from './multiplayer';
 import Spectator from './spectator';
+import UI from './ui';
 import Authenticated from './authenticated';
 
 const routes = [
@@ -16,6 +17,11 @@ const routes = [
     path: '/',
     text: 'Singleplayer',
     component: Singleplayer,
+  },
+  {
+    path: '/ui',
+    text: 'UI',
+    component: UI,
   },
   {
     path: '/multiplayer',
