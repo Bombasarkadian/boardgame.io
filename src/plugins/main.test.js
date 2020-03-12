@@ -20,7 +20,7 @@ describe('plugins', () => {
         },
       },
 
-      endIf: (G, ctx) => {
+      endIf: (_, ctx) => {
         if (ctx.test === undefined) {
           throw new Error('API is not defined');
         }
