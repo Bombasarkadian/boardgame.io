@@ -48,7 +48,7 @@ const TicTacToe = {
   moves: {
     move: (G, ctx, { obj }) => {
       const symbol = ctx.currentPlayer === '0' ? 'O' : 'X';
-      ctx.api
+      ctx['bgio-sandbox']
         .object('point-' + symbol)
         .top()
         .addTo(obj);
@@ -60,7 +60,8 @@ const TicTacToe = {
   },
 
   endIf: (G, ctx) => {
-    if (IsVictory(ctx.api)) {
+    console.log(ctx);
+    if (IsVictory(ctx['bgio-sandbox'])) {
       return { winner: ctx.currentPlayer };
     }
     if (G.cells.filter(c => c === null).length == 0) {
