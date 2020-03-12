@@ -9,7 +9,7 @@
 import { schema, state } from './ui-schema';
 import { PluginSandbox } from 'bgio-sandbox';
 
-function IsVictory(api) {
+function IsVictory(ctx) {
   const positions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -24,7 +24,7 @@ function IsVictory(api) {
   const isRowComplete = row => {
     const symbols = row.map(i => {
       const id = `point-${i + 1}`;
-      const card = api.object(id).top();
+      const card = ctx.sandbox.object(id).top();
       return card ? card.opts().text : null;
     });
 
@@ -48,7 +48,7 @@ const TicTacToe = {
   moves: {
     move: (G, ctx, { obj }) => {
       const symbol = ctx.currentPlayer === '0' ? 'O' : 'X';
-      ctx['bgio-sandbox']
+      ctx.sandbox
         .object('point-' + symbol)
         .top()
         .addTo(obj);
@@ -60,8 +60,7 @@ const TicTacToe = {
   },
 
   endIf: (G, ctx) => {
-    console.log(ctx);
-    if (IsVictory(ctx['bgio-sandbox'])) {
+    if (IsVictory(ctx)) {
       return { winner: ctx.currentPlayer };
     }
     if (G.cells.filter(c => c === null).length == 0) {

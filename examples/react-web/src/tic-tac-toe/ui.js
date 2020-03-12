@@ -25,11 +25,11 @@ class UI extends React.Component {
   componentDidMount() {
     client.start();
 
-    const state = client.getState().G._ui.state;
+    const state = client.getState().plugins.sandbox.data.state;
     const svg = Init(schema, state, client);
 
-    client.subscribe(({ G }) => {
-      ApplyActions(svg, G._ui.actions);
+    client.subscribe(({ plugins }) => {
+      ApplyActions(svg, plugins.sandbox.data.actions);
     });
   }
 
