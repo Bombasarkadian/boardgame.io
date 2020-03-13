@@ -23,12 +23,12 @@ export const schema = {
 
   'point-O': {
     type: ObjectType.SNAP_POINT,
-    opts: { x: 800, y: 300, enabled: false },
+    opts: { x: 200, y: 700, enabled: false },
   },
 
   'point-X': {
     type: ObjectType.SNAP_POINT,
-    opts: { x: 1000, y: 300, enabled: false },
+    opts: { x: 400, y: 700, enabled: false },
   },
 
   'point-1': {

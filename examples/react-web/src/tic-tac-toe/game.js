@@ -68,6 +68,21 @@ const TicTacToe = {
     }
   },
 
+  onEnd: (_, ctx) => {
+    ctx.sandbox
+      .object('point-1')
+      .top()
+      .opts('highlight', true);
+    ctx.sandbox
+      .object('point-2')
+      .top()
+      .opts('highlight', true);
+    ctx.sandbox
+      .object('point-3')
+      .top()
+      .opts('highlight', true);
+  },
+
   ai: {
     enumerate: G => {
       let r = [];
