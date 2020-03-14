@@ -26,6 +26,10 @@ class UI extends React.Component {
     client.start();
 
     const state = client.getState().plugins.sandbox.data.state;
+
+    // TODO: Need to figure out a way to pass the schema
+    // from the plugin to here (without it being stored
+    // in the state).
     const svg = Init(schema, state, client);
 
     client.subscribe(({ plugins }) => {

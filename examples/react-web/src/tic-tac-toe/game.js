@@ -6,8 +6,7 @@
  * https://opensource.org/licenses/MIT.
  */
 
-import { schema, state } from './ui-schema';
-import { PluginSandbox } from 'bgio-sandbox';
+import { ObjectType, PluginSandbox } from 'bgio-sandbox';
 
 function IsVictory(ctx) {
   const positions = [
@@ -37,16 +36,64 @@ function IsVictory(ctx) {
 const TicTacToe = {
   name: 'tic-tac-toe',
 
-  setup: () => ({
-    cells: new Array(9).fill(null),
-  }),
+  setup: (ctx) => {
+    for (let i = 1; i <= 9; i++) {
+      ctx.sandbox.object(`card-X${i}`).addTo(`point-X`);
+      ctx.sandbox.object(`card-O${i}`).addTo(`point-O`);
+    }
 
-  // TODO: Don't pass state in but create it in the setup
-  // function via an API instead.
-  plugins: [PluginSandbox(schema, state)],
+    return {
+      cells: new Array(9).fill(null),
+    };
+  },
+
+  sandbox: {
+    init: (api) => {
+      api.create({
+        id: 'point-O',
+        type: ObjectType.CARD_HOLDER,
+        opts: { x: 200, y: 700, enabled: false },
+      });
+
+      api.create({
+        id: 'point-X',
+        type: ObjectType.CARD_HOLDER,
+        opts: { x: 400, y: 700, enabled: false },
+      });
+
+      const xValues = [100, 300, 500];
+      const yValues = [100, 300, 500];
+
+      for (let i = 1; i <= 9; i++) {
+        api.create({
+          id: `card-O${i}`,
+          type: ObjectType.CARD,
+          opts: { text: 'O' },
+        });
+
+        api.create({
+          id: `card-X${i}`,
+          type: ObjectType.CARD,
+          opts: { text: 'X' },
+        });
+
+        const x = xValues[(i - 1) % 3];
+        const y = yValues[Math.floor((i - 1) / 3)];
+
+        api.create({
+          id: `point-${i}`,
+          type: ObjectType.CARD_HOLDER,
+          data: { id: i },
+          opts: { x, y, onClick: 'move' },
+        });
+      }
+    },
+  },
+
+  plugins: [PluginSandbox],
 
   moves: {
-    move: (G, ctx, { obj }) => {
+    move: (_, ctx, { obj }) => {
       const symbol = ctx.currentPlayer === '0' ? 'O' : 'X';
       ctx.sandbox
         .object('point-' + symbol)
@@ -59,12 +106,9 @@ const TicTacToe = {
     moveLimit: 1,
   },
 
-  endIf: (G, ctx) => {
+  endIf: (_, ctx) => {
     if (IsVictory(ctx)) {
       return { winner: ctx.currentPlayer };
-    }
-    if (G.cells.filter(c => c === null).length == 0) {
-      return { draw: true };
     }
   },
 
