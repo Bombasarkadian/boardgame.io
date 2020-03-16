@@ -8,7 +8,7 @@
 
 import { ObjectType, PluginSandbox } from 'bgio-sandbox';
 
-function IsVictory(ctx) {
+function CompleteRows(ctx) {
   const positions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -20,23 +20,24 @@ function IsVictory(ctx) {
     [2, 4, 6],
   ];
 
-  const isRowComplete = row => {
-    const symbols = row.map(i => {
+  const symbols = row =>
+    row.map(i => {
       const id = `point-${i + 1}`;
       const card = ctx.sandbox.object(id).top();
-      return card ? card.opts().text : null;
+      const symbol = card ? card.opts().text : null;
+      return { index: i, symbol };
     });
 
-    return symbols.every(s => s !== null && s === symbols[0]);
-  };
+  const isComplete = row =>
+    row.every(r => r.symbol !== null && r.symbol === row[0].symbol);
 
-  return positions.map(isRowComplete).some(i => i === true);
+  return positions.map(symbols).filter(isComplete);
 }
 
 const TicTacToe = {
   name: 'tic-tac-toe',
 
-  setup: (ctx) => {
+  setup: ctx => {
     for (let i = 1; i <= 9; i++) {
       ctx.sandbox.object(`card-X${i}`).addTo(`point-X`);
       ctx.sandbox.object(`card-O${i}`).addTo(`point-O`);
@@ -48,7 +49,7 @@ const TicTacToe = {
   },
 
   sandbox: {
-    init: (api) => {
+    init: api => {
       api.create({
         id: 'point-O',
         type: ObjectType.CARD_HOLDER,
@@ -107,24 +108,23 @@ const TicTacToe = {
   },
 
   endIf: (_, ctx) => {
-    if (IsVictory(ctx)) {
-      return { winner: ctx.currentPlayer };
+    const rows = CompleteRows(ctx);
+
+    if (rows.length > 0) {
+      return {
+        winner: ctx.currentPlayer,
+        winningRow: rows[0].map(r => r.index),
+      };
     }
   },
 
   onEnd: (_, ctx) => {
-    ctx.sandbox
-      .object('point-1')
-      .top()
-      .opts('highlight', true);
-    ctx.sandbox
-      .object('point-2')
-      .top()
-      .opts('highlight', true);
-    ctx.sandbox
-      .object('point-3')
-      .top()
-      .opts('highlight', true);
+    ctx.gameover.winningRow.forEach(i => {
+      ctx.sandbox
+        .object(`point-${i + 1}`)
+        .top()
+        .opts('highlight', true);
+    });
   },
 
   ai: {
