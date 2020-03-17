@@ -7,6 +7,8 @@
  */
 
 import PluginImmer from './plugin-immer';
+import PluginRandom from './plugin-random';
+import PluginEvents from './plugin-events';
 import { GameState, State, GameConfig, Plugin, Ctx } from '../types';
 
 interface PluginOpts {
@@ -17,7 +19,7 @@ interface PluginOpts {
 /**
  * List of plugins that are always added.
  */
-const DEFAULT_PLUGINS = [PluginImmer];
+const DEFAULT_PLUGINS = [PluginImmer, PluginRandom, PluginEvents];
 
 /**
  * The API's created by various plugins are stored in the plugins
@@ -95,7 +97,7 @@ export const Enhance = (state: State, opts: PluginOpts): State => {
     .filter(plugin => plugin.api !== undefined)
     .forEach(plugin => {
       const name = plugin.name;
-      const pluginState = state.plugins[name];
+      const pluginState = state.plugins[name] || { data: {} };
 
       const api = plugin.api({
         G: state.G,
@@ -119,17 +121,17 @@ export const Enhance = (state: State, opts: PluginOpts): State => {
  * Allows plugins to update their state after a move / event.
  */
 export const Flush = (state: State, opts: PluginOpts): State => {
-  [...DEFAULT_PLUGINS, ...opts.game.plugins]
-    .filter(plugin => plugin.flush !== undefined)
-    .forEach(plugin => {
-      const name = plugin.name;
-      const { api, data } = state.plugins[name];
+  [...DEFAULT_PLUGINS, ...opts.game.plugins].forEach(plugin => {
+    const name = plugin.name;
+    const pluginState = state.plugins[name] || { data: {} };
+
+    if (plugin.flush) {
       const newData = plugin.flush({
         G: state.G,
         ctx: state.ctx,
         game: opts.game,
-        api,
-        data,
+        api: pluginState.api,
+        data: pluginState.data,
       });
 
       state = {
@@ -139,6 +141,52 @@ export const Flush = (state: State, opts: PluginOpts): State => {
           [plugin.name]: { data: newData },
         },
       };
-    });
+    } else if (plugin.flushRaw) {
+      state = plugin.flushRaw({
+        state,
+        game: opts.game,
+        api: pluginState.api,
+        data: pluginState.data,
+      });
+
+      // Remove everything other than data.
+      const data = state.plugins[name].data;
+      state = {
+        ...state,
+        plugins: {
+          ...state.plugins,
+          [plugin.name]: { data },
+        },
+      };
+    }
+  });
+
   return state;
+};
+
+/**
+ * Allows plugins to indicate if they should not be materialized on the client.
+ * This will cause the client to discard the state update and wait for the
+ * master instead.
+ */
+export const NoClient = (state: State, opts: PluginOpts): boolean => {
+  return [...DEFAULT_PLUGINS, ...opts.game.plugins]
+    .filter(plugin => plugin.noClient !== undefined)
+    .map(plugin => {
+      const name = plugin.name;
+      const pluginState = state.plugins[name];
+
+      if (pluginState) {
+        return plugin.noClient({
+          G: state.G,
+          ctx: state.ctx,
+          game: opts.game,
+          api: pluginState.api,
+          data: pluginState.data,
+        });
+      }
+
+      return false;
+    })
+    .some(value => value === true);
 };
