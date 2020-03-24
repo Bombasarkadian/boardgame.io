@@ -5,7 +5,6 @@ import { Flow } from './core/flow';
 export interface State {
   G: object;
   ctx: Ctx;
-  log?: Array<LogEntry>;
   deltalog?: Array<LogEntry>;
   plugins: {
     [pluginName: string]: PluginState;
@@ -13,10 +12,9 @@ export interface State {
   _undo: Array<Undo>;
   _redo: Array<Undo>;
   _stateID: number;
-  _initial?: Omit<State, '_initial'> | {};
 }
 
-export type GameState = Pick<State, 'G' | 'ctx' | 'plugins'>;
+export type PartialGameState = Pick<State, 'G' | 'ctx' | 'plugins'>;
 
 export type StageName = string;
 export type PlayerID = string;
@@ -155,9 +153,17 @@ export namespace Server {
   };
 
   export interface GameMetadata {
+    gameName: string;
     players: { [id: number]: PlayerMetadata };
     setupData: any;
     nextRoomID?: string;
+  }
+
+  export interface LobbyConfig {
+    uuid?: Function;
+    generateCredentials?: Function;
+    apiPort?: number;
+    apiCallback?: Function;
   }
 }
 
@@ -208,4 +214,16 @@ export namespace ActionPayload {
   type GetPayload<T extends object> = Object.At<T, 'payload'>;
   export type MakeMove = GetPayload<ActionShape.MakeMove>;
   export type GameEvent = GetPayload<ActionShape.GameEvent>;
+}
+
+export type FilteredMetadata = {
+  id: number;
+  name?: string;
+}[];
+
+export interface SyncInfo {
+  state: State;
+  filteredMetadata: FilteredMetadata;
+  initialState: State;
+  log: LogEntry[];
 }

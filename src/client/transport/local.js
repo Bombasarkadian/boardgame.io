@@ -67,7 +67,6 @@ export function LocalMaster({ game, bots }) {
   };
 
   const master = new Master(game, new InMemory(), { send, sendAll }, false);
-  master.executeSynchronously = true;
 
   master.connect = (gameID, playerID, callback) => {
     clientCallbacks[playerID] = callback;
@@ -140,9 +139,9 @@ export class LocalTransport extends Transport {
    * Called when the client first connects to the master
    * and requests the current game state.
    */
-  onSync(gameID, state, log) {
+  onSync(gameID, syncInfo) {
     if (gameID == this.gameID) {
-      const action = ActionCreators.sync(state, log);
+      const action = ActionCreators.sync(syncInfo);
       this.store.dispatch(action);
     }
   }

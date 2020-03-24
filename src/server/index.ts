@@ -13,12 +13,13 @@ import { DBFromEnv } from './db';
 import { Game } from '../core/game';
 import * as logger from '../core/logger';
 import { SocketIO } from './transport/socketio';
+import { Server as ServerTypes } from '../types';
 
 interface ServerConfig {
-  port?: Number;
+  port?: number;
   callback?: Function;
   lobbyConfig?: {
-    apiPort: Number;
+    apiPort: number;
     apiCallback?: Function;
   };
 }
@@ -27,7 +28,7 @@ interface ServerConfig {
  * Build config object from server run arguments.
  */
 export const createServerRunConfig = (
-  portOrConfig: Number | ServerConfig,
+  portOrConfig: number | ServerConfig,
   callback?: Function
 ): ServerConfig => {
   const config: ServerConfig = {};
@@ -37,7 +38,7 @@ export const createServerRunConfig = (
     config.callback = serverConfig.callback || callback;
     config.lobbyConfig = serverConfig.lobbyConfig;
   } else {
-    config.port = portOrConfig as Number;
+    config.port = portOrConfig as number;
     config.callback = callback;
   }
   return config;
@@ -83,14 +84,14 @@ export function Server({
     app,
     db,
 
-    run: async (portOrConfig: Number | object, callback?: Function) => {
+    run: async (portOrConfig: number | object, callback?: Function) => {
       const serverRunConfig = createServerRunConfig(portOrConfig, callback);
 
       // DB
       await db.connect();
 
       // Lobby API
-      const lobbyConfig = serverRunConfig.lobbyConfig;
+      const lobbyConfig: ServerTypes.LobbyConfig = serverRunConfig.lobbyConfig;
       let apiServer;
       if (!lobbyConfig || !lobbyConfig.apiPort) {
         addApiToServer({ app, db, games, lobbyConfig, generateCredentials });
