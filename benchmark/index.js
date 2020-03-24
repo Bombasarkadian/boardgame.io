@@ -20,7 +20,7 @@ const game = {
 };
 
 const reducer = CreateGameReducer({ game });
-const state = InitializeGame({ game });
+const { initialState: state } = InitializeGame({ game });
 const client = Client({ game });
 
 new Benchmark.Suite()

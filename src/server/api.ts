@@ -41,7 +41,7 @@ export const CreateGame = async (
 ) => {
   const gameMetadata = createGameMetadata({ gameName: game.name });
 
-  const state = InitializeGame({
+  const initial = InitializeGame({
     game,
     numPlayers,
     setupData,
@@ -56,7 +56,7 @@ export const CreateGame = async (
   const gameID = lobbyConfig.uuid();
 
   await db.setMetadata(gameID, gameMetadata);
-  await db.setState(gameID, state);
+  await db.setState(gameID, initial.initialState);
 
   return gameID;
 };

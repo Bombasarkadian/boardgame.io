@@ -335,7 +335,7 @@ test('playOrder', () => {
   const game = {};
   const reducer = CreateGameReducer({ game });
 
-  let state = InitializeGame({ game, numPlayers: 3 });
+  let { initialState: state } = InitializeGame({ game, numPlayers: 3 });
 
   state.ctx = {
     ...state.ctx,
@@ -409,7 +409,7 @@ describe('setActivePlayers', () => {
 
     const reducer = CreateGameReducer({ game });
 
-    let state = InitializeGame({ game });
+    let { initialState: state } = InitializeGame({ game });
     state = reducer(state, makeMove('B', null, '0'));
     expect(Object.keys(state.ctx.activePlayers)).toEqual(['0', '1']);
     state = reducer(state, makeMove('A', null, '0'));
@@ -434,7 +434,7 @@ describe('setActivePlayers', () => {
 
     const reducer = CreateGameReducer({ game });
 
-    let state = InitializeGame({ game, numPlayers: 3 });
+    let { initialState: state } = InitializeGame({ game, numPlayers: 3 });
 
     // on move B, control switches from player 0 to players 1 and 2
     state = reducer(state, makeMove('B', null, '0'));
@@ -462,7 +462,7 @@ describe('setActivePlayers', () => {
       };
 
       const reducer = CreateGameReducer({ game });
-      let state = InitializeGame({ game });
+      let { initialState: state } = InitializeGame({ game });
 
       expect(state.ctx).toMatchObject({
         activePlayers: { '0': 'stage' },
@@ -497,7 +497,7 @@ describe('setActivePlayers', () => {
         };
 
         const reducer = CreateGameReducer({ game });
-        let state = InitializeGame({ game });
+        let { initialState: state } = InitializeGame({ game });
 
         expect(state.ctx).toMatchObject({
           activePlayers: { '0': 'stage1' },
@@ -547,7 +547,7 @@ describe('setActivePlayers', () => {
         };
 
         const reducer = CreateGameReducer({ game });
-        let state = InitializeGame({ game });
+        let { initialState: state } = InitializeGame({ game });
 
         expect(state.ctx).toMatchObject({
           activePlayers: { '0': 'stage1' },
@@ -621,7 +621,7 @@ describe('setActivePlayers', () => {
       };
 
       const reducer = CreateGameReducer({ game });
-      let state = InitializeGame({ game });
+      let { initialState: state } = InitializeGame({ game });
 
       expect(state.ctx).toMatchObject({
         activePlayers: { '0': 'stage1' },
@@ -670,7 +670,7 @@ describe('setActivePlayers', () => {
       };
 
       const reducer = CreateGameReducer({ game });
-      let state = InitializeGame({ game, numPlayers: 3 });
+      let { initialState: state } = InitializeGame({ game, numPlayers: 3 });
 
       expect(state.ctx._activePlayersMoveLimit).toEqual({
         '0': 3,
@@ -717,7 +717,7 @@ describe('setActivePlayers', () => {
       };
 
       const reducer = CreateGameReducer({ game });
-      let state = InitializeGame({ game, numPlayers: 3 });
+      let { initialState: state } = InitializeGame({ game, numPlayers: 3 });
 
       expect(state.ctx._activePlayersMoveLimit).toEqual({
         '0': 2,
@@ -758,7 +758,7 @@ describe('setActivePlayers', () => {
         },
       };
 
-      let state = InitializeGame({ game, numPlayers: 2 });
+      let { initialState: state } = InitializeGame({ game, numPlayers: 2 });
 
       expect(state.ctx._activePlayersMoveLimit).toEqual({
         '0': 2,
@@ -783,7 +783,7 @@ describe('setActivePlayers', () => {
       };
 
       const reducer = CreateGameReducer({ game });
-      let state = InitializeGame({ game, numPlayers: 3 });
+      let { initialState: state } = InitializeGame({ game, numPlayers: 3 });
 
       expect(state.ctx._activePlayersMoveLimit).toEqual({
         '0': 1,
@@ -819,7 +819,7 @@ describe('setActivePlayers', () => {
       };
 
       const reducer = CreateGameReducer({ game });
-      let state = InitializeGame({ game, numPlayers: 3 });
+      let { initialState: state } = InitializeGame({ game, numPlayers: 3 });
 
       state = reducer(state, makeMove('A', null, '0'));
       state = reducer(state, makeMove('A', null, '1'));
@@ -867,7 +867,7 @@ describe('setActivePlayers', () => {
       };
 
       reducer = CreateGameReducer({ game });
-      state = InitializeGame({ game, numPlayers: 3 });
+      state = InitializeGame({ game, numPlayers: 3 }).initialState;
     });
 
     beforeEach(() => {

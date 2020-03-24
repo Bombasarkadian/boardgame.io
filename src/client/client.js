@@ -106,7 +106,8 @@ class _ClientImpl {
 
     this.initialState = null;
     if (!multiplayer) {
-      this.initialState = InitializeGame({ game: this.game, numPlayers });
+      const initial = InitializeGame({ game: this.game, numPlayers });
+      this.initialState = initial.initialState;
     }
 
     this.reset = () => {

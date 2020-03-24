@@ -353,7 +353,8 @@ export class Master {
     // If the game doesn't exist, then create one on demand.
     // TODO: Move this out of the sync call.
     if (state === undefined) {
-      initialState = state = InitializeGame({ game: this.game, numPlayers });
+      const initial = InitializeGame({ game: this.game, numPlayers });
+      initialState = state = initial.initialState;
 
       this.subscribeCallback({
         state,

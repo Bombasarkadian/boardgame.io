@@ -11,6 +11,10 @@ import { GameConfig } from '../types';
 import * as plugins from '../plugins/main';
 import { PartialGameState, State, Ctx } from '../types';
 
+export interface InitializeGameReturnValue {
+  initialState: State;
+}
+
 /**
  * Creates the initial game state.
  */
@@ -22,7 +26,7 @@ export function InitializeGame({
   game: GameConfig;
   numPlayers: number;
   setupData?: any;
-}) {
+}): InitializeGameReturnValue {
   game = Game(game);
 
   if (!numPlayers) {
@@ -63,5 +67,5 @@ export function InitializeGame({
   initial = game.flow.init(initial);
   initial = plugins.Flush(initial, { game });
 
-  return initial;
+  return { initialState: initial };
 }
