@@ -33,7 +33,7 @@ const game = {
   endIf: (G, ctx) => (G.victory ? ctx.currentPlayer : undefined),
 };
 const reducer = CreateGameReducer({ game });
-const initialState = InitializeGame({ game });
+const initialState = InitializeGame({ game }).initialState;
 
 test('_stateID is incremented', () => {
   let state = initialState;
@@ -153,7 +153,7 @@ test('light client when multiplayer=true', () => {
 
   {
     const reducer = CreateGameReducer({ game });
-    let state = InitializeGame({ game });
+    let state = InitializeGame({ game }).initialState;
     expect(state.ctx.gameover).toBe(undefined);
     state = reducer(state, makeMove('A'));
     expect(state.ctx.gameover).toBe(true);
@@ -161,7 +161,7 @@ test('light client when multiplayer=true', () => {
 
   {
     const reducer = CreateGameReducer({ game, isClient: true });
-    let state = InitializeGame({ game });
+    let state = InitializeGame({ game }).initialState;
     expect(state.ctx.gameover).toBe(undefined);
     state = reducer(state, makeMove('A'));
     expect(state.ctx.gameover).toBe(undefined);
@@ -180,7 +180,7 @@ test('disable optimistic updates', () => {
 
   {
     const reducer = CreateGameReducer({ game });
-    let state = InitializeGame({ game });
+    let state = InitializeGame({ game }).initialState;
     expect(state.G).not.toMatchObject({ A: true });
     state = reducer(state, makeMove('A'));
     expect(state.G).toMatchObject({ A: true });
@@ -188,7 +188,7 @@ test('disable optimistic updates', () => {
 
   {
     const reducer = CreateGameReducer({ game, isClient: true });
-    let state = InitializeGame({ game });
+    let state = InitializeGame({ game }).initialState;
     expect(state.G).not.toMatchObject({ A: true });
     state = reducer(state, makeMove('A'));
     expect(state.G).not.toMatchObject({ A: true });
@@ -197,7 +197,7 @@ test('disable optimistic updates', () => {
 
 test('numPlayers', () => {
   const numPlayers = 4;
-  const state = InitializeGame({ game, numPlayers });
+  const state = InitializeGame({ game, numPlayers }).initialState;
   expect(state.ctx.numPlayers).toBe(4);
 });
 
@@ -251,7 +251,7 @@ describe('Events API', () => {
   };
 
   const reducer = CreateGameReducer({ game });
-  let state = InitializeGame({ game });
+  let state = InitializeGame({ game }).initialState;
 
   test('is attached at the beginning', () => {
     expect(state.G).not.toEqual({ error: true });
@@ -285,9 +285,9 @@ describe('Random inside setup()', () => {
   };
 
   test('setting seed', () => {
-    const state1 = InitializeGame({ game: game1 });
-    const state2 = InitializeGame({ game: game2 });
-    const state3 = InitializeGame({ game: game3 });
+    const state1 = InitializeGame({ game: game1 }).initialState;
+    const state2 = InitializeGame({ game: game2 }).initialState;
+    const state3 = InitializeGame({ game: game3 }).initialState;
 
     expect(state1.G.n).not.toBe(state2.G.n);
     expect(state2.G.n).toBe(state3.G.n);
@@ -307,7 +307,7 @@ test('undo / redo', () => {
 
   const reducer = CreateGameReducer({ game, numPlayers: 2 });
 
-  let state = InitializeGame({ game });
+  let state = InitializeGame({ game }).initialState;
 
   state = reducer(state, makeMove('move', 'A'));
   expect(state.G).toMatchObject({ A: true });
