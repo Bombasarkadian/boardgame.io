@@ -6,7 +6,7 @@
  * https://opensource.org/licenses/MIT.
  */
 
-import { ObjectType, PluginSandbox } from 'bgio-sandbox';
+import { ObjectType, PluginOpenTabletop } from 'open-tabletop';
 
 function CompleteRows(ctx) {
   const positions = [
@@ -91,7 +91,7 @@ const TicTacToe = {
     },
   },
 
-  plugins: [PluginSandbox],
+  plugins: [PluginOpenTabletop],
 
   moves: {
     move: (_, ctx, { obj }) => {
