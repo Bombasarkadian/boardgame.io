@@ -9,7 +9,6 @@
 import React from 'react';
 import { Init, ApplyActions } from 'bgio-ui';
 import { Client } from 'boardgame.io/client';
-import { schema } from './ui-schema';
 import { Debug } from 'boardgame.io/debug';
 import TicTacToe from './game';
 
@@ -26,10 +25,8 @@ class UI extends React.Component {
     client.start();
 
     const state = client.getState().plugins.sandbox.data.state;
+    const schema = client.getState().plugins.sandbox.data.schema;
 
-    // TODO: Need to figure out a way to pass the schema
-    // from the plugin to here (without it being stored
-    // in the state).
     const svg = Init(schema, state, client);
 
     client.subscribe(({ plugins }) => {
