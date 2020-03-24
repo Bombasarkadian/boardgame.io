@@ -107,7 +107,7 @@ test('Random API is not executed optimisitically', () => {
 
   {
     const reducer = CreateGameReducer({ game });
-    let { initialState: state } = InitializeGame({ game });
+    let state = InitializeGame({ game });
     expect(state.G.die).not.toBeDefined();
     state = reducer(state, makeMove('rollDie'));
     expect(state.G).toMatchObject({ die: 4 });
@@ -115,7 +115,7 @@ test('Random API is not executed optimisitically', () => {
 
   {
     const reducer = CreateGameReducer({ game, isClient: true });
-    let { initialState: state } = InitializeGame({ game });
+    let state = InitializeGame({ game });
     expect(state.G.die).not.toBeDefined();
     state = reducer(state, makeMove('rollDie'));
     expect(state.G.die).not.toBeDefined();

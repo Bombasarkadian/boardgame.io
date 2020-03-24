@@ -148,7 +148,7 @@ describe('Simulate', () => {
   };
 
   test('multiple bots', async () => {
-    const { initialState: state } = InitializeGame({ game: TicTacToe });
+    const state = InitializeGame({ game: TicTacToe });
     const { state: endState } = await Simulate({
       game: TicTacToe,
       bots,
@@ -159,7 +159,7 @@ describe('Simulate', () => {
 
   test('single bot', async () => {
     const bot = new RandomBot({ seed: 'test', enumerate });
-    const { initialState: state } = InitializeGame({ game: TicTacToe });
+    const state = InitializeGame({ game: TicTacToe });
     const { state: endState } = await Simulate({
       game: TicTacToe,
       bots: bot,
@@ -187,7 +187,7 @@ describe('Simulate', () => {
       enumerate: () => [makeMove('A')],
     });
 
-    const { initialState: state } = InitializeGame({ game });
+    const state = InitializeGame({ game });
     const { state: endState } = await Simulate({
       game,
       bots: bot,
@@ -233,7 +233,7 @@ describe('Bot', () => {
 describe('MCTSBot', () => {
   test('game that never ends', async () => {
     const game = {};
-    const { initialState: state } = InitializeGame({ game });
+    const state = InitializeGame({ game });
     const bot = new MCTSBot({ seed: 'test', game, enumerate: () => [] });
     const { state: endState } = await Simulate({ game, bots: bot, state });
     expect(endState.ctx.turn).toBe(1);
@@ -251,7 +251,7 @@ describe('MCTSBot', () => {
       }),
     };
 
-    const { initialState } = InitializeGame({ game: TicTacToe });
+    const initialState = InitializeGame({ game: TicTacToe });
 
     for (let i = 0; i < 5; i++) {
       const state = initialState;
@@ -265,7 +265,7 @@ describe('MCTSBot', () => {
   });
 
   test('MCTSBot vs. MCTSBot', async () => {
-    const { initialState } = InitializeGame({ game: TicTacToe });
+    const initialState = InitializeGame({ game: TicTacToe });
     const iterations = 400;
 
     for (let i = 0; i < 5; i++) {
@@ -316,7 +316,7 @@ describe('MCTSBot', () => {
       enumerate: () => [makeMove('A')],
     });
 
-    const { initialState: state } = InitializeGame({ game });
+    const state = InitializeGame({ game });
     const { state: endState } = await Simulate({
       game,
       bots: bot,
@@ -334,7 +334,7 @@ describe('MCTSBot', () => {
       },
     });
 
-    const { initialState: state } = InitializeGame({ game: TicTacToe });
+    const state = InitializeGame({ game: TicTacToe });
 
     for (let i = 0; i < 10; i++) {
       const bot = new MCTSBot({
@@ -352,7 +352,7 @@ describe('MCTSBot', () => {
   });
 
   test('async mode', async () => {
-    const { initialState } = InitializeGame({ game: TicTacToe });
+    const initialState = InitializeGame({ game: TicTacToe });
     const bot = new MCTSBot({
       seed: '0',
       game: TicTacToe,
@@ -379,7 +379,7 @@ describe('MCTSBot', () => {
     });
 
     test('functions', () => {
-      const { initialState: state } = InitializeGame({ game: TicTacToe });
+      const state = InitializeGame({ game: TicTacToe });
 
       // jump ahead in the game because the example iterations
       // and playoutDepth functions are based on the turn

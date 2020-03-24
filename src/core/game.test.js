@@ -258,7 +258,7 @@ describe('config errors', () => {
 
   test('invalid move object', () => {
     const game = Game({ moves: { A: 1 } });
-    const { initialState: state } = InitializeGame({ game });
+    const state = InitializeGame({ game });
     game.processMove(state, {});
     expect(error).toBeCalledWith(
       expect.stringContaining('invalid move object')

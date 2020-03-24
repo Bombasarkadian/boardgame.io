@@ -349,7 +349,7 @@ describe('move dispatchers', () => {
     endIf: (G, ctx) => (G.victory ? ctx.currentPlayer : undefined),
   });
   const reducer = CreateGameReducer({ game });
-  const { initialState } = InitializeGame({ game });
+  const initialState = InitializeGame({ game });
 
   test('basic', () => {
     const store = createStore(reducer, initialState);

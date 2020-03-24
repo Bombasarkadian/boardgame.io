@@ -104,7 +104,7 @@ describe('multiplayer', () => {
 
   beforeEach(() => {
     const reducer = CreateGameReducer({ game });
-    const { initialState } = InitializeGame({ game });
+    const initialState = InitializeGame({ game });
     m.store = store = createStore(reducer, initialState);
   });
 
