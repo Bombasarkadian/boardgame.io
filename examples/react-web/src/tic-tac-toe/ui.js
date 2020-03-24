@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { Init, ApplyActions } from 'bgio-ui';
+import { Init, ApplyActions } from 'open-tabletop-svg';
 import { Client } from 'boardgame.io/client';
 import { Debug } from 'boardgame.io/debug';
 import TicTacToe from './game';
