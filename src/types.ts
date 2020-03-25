@@ -139,6 +139,7 @@ export interface LongFormMove<
   redact?: boolean;
   client?: boolean;
   undoable?: boolean | ((G: G, ctx: CtxWithPlugins) => boolean);
+  unsafe?: boolean;
 }
 
 export type Move<G extends any = any, CtxWithPlugins extends Ctx = Ctx> =

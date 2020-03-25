@@ -22,6 +22,7 @@ import {
   CredentialedActionShape,
   LogEntry,
   PlayerID,
+  LongFormMove,
 } from '../types';
 import * as StorageAPI from '../server/db/base';
 
@@ -249,10 +250,23 @@ export class Master {
     }
 
     if (state._stateID !== stateID) {
-      logging.error(
-        `invalid stateID, was=[${stateID}], expected=[${state._stateID}]`
-      );
-      return;
+      if (
+        action.type === MAKE_MOVE &&
+        (this.game.flow.getMove(
+          state.ctx,
+          action.payload.type,
+          playerID
+        ) as LongFormMove).unsafe
+      ) {
+        logging.error(
+          `invalid stateID allowed, was=[${stateID}], expected=[${state._stateID}]`
+        );
+      } else {
+        logging.error(
+          `invalid stateID, was=[${stateID}], expected=[${state._stateID}]`
+        );
+        return;
+      }
     }
 
     // Update server's version of the store.
