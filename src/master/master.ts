@@ -249,6 +249,23 @@ export class Master {
       return;
     }
 
+    if (
+      action.type == MAKE_MOVE &&
+      (this.game.flow.getMove(
+        state.ctx,
+        action.payload.type,
+        playerID
+      ) as LongFormMove).broadcast
+    ) {
+      this.transportAPI.sendAll((playerID: string) => {
+        return {
+          type: 'broadcast',
+          args: [gameID, action.type == MAKE_MOVE ? action.payload : {}],
+        };
+      });
+      return;
+    }
+
     if (state._stateID !== stateID) {
       if (
         action.type === MAKE_MOVE &&
@@ -259,7 +276,7 @@ export class Master {
         ) as LongFormMove).unsafe
       ) {
         logging.error(
-          `invalid stateID allowed, was=[${stateID}], expected=[${state._stateID}]`
+          `invalid stateID allowed, was=[${stateID}], expected=[${state._stateID}], action=${action.payload.type}`
         );
       } else {
         logging.error(

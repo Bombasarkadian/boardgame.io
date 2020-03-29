@@ -130,6 +130,7 @@ export function Client(opts) {
           undo: this.client.undo,
           redo: this.client.redo,
           gameMetadata: this.client.gameMetadata,
+          rawClient: this.client,
         });
       }
 

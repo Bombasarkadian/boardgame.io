@@ -197,7 +197,10 @@ export function CreateGameReducer({
           return state;
         }
 
-        state = newState;
+        // Broadcast "moves" don't modify state
+        if ((move as LongFormMove).broadcast !== true) {
+          state = newState;
+        }
 
         // If we're on the client, just process the move
         // and no triggers in multiplayer mode.
