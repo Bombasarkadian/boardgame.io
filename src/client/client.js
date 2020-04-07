@@ -232,6 +232,7 @@ class _ClientImpl {
 
     this.transport.subscribeGameMetadata(metadata => {
       this.gameMetadata = metadata;
+      this.notifySubscribers();
     });
 
     this._debugPanel = null;
@@ -349,6 +350,8 @@ class _ClientImpl {
     if (state.ctx.gameover !== undefined) {
       isActive = false;
     }
+
+    state.ctx.gameMetadata = this.gameMetadata;
 
     // Secrets are normally stripped on the server,
     // but we also strip them here so that game developers

@@ -196,13 +196,19 @@ export class Master {
     const key = gameID;
 
     let state: State;
-    let result: StorageAPI.FetchResult<{ state: true }>;
+    let gameMetadata: Server.GameMetadata;
+    let filteredMetadata: FilteredMetadata;
+    let result: StorageAPI.FetchResult<{ state: true; metadata: true }>;
     if (IsSynchronous(this.storageAPI)) {
-      result = this.storageAPI.fetch(key, { state: true });
+      result = this.storageAPI.fetch(key, { state: true, metadata: true });
     } else {
-      result = await this.storageAPI.fetch(key, { state: true });
+      result = await this.storageAPI.fetch(key, {
+        state: true,
+        metadata: true,
+      });
     }
     state = result.state;
+    gameMetadata = result.metadata;
 
     if (state === undefined) {
       logging.error(`game not found, gameID=[${key}]`);
@@ -213,6 +219,14 @@ export class Master {
       logging.error(`game over - gameID=[${key}]`);
       return;
     }
+
+    if (gameMetadata) {
+      filteredMetadata = Object.values(
+        gameMetadata.players
+      ).map(({ id, name, isConnected }) => ({ id, name, isConnected }));
+    }
+
+    state.ctx.gameMetadata = filteredMetadata;
 
     const reducer = CreateGameReducer({
       game: this.game,
@@ -364,9 +378,9 @@ export class Master {
     gameMetadata = result.metadata;
 
     if (gameMetadata) {
-      filteredMetadata = Object.values(gameMetadata.players).map(player => {
-        return { id: player.id, name: player.name };
-      });
+      filteredMetadata = Object.values(
+        gameMetadata.players
+      ).map(({ id, name, isConnected }) => ({ id, name, isConnected }));
     }
 
     // If the game doesn't exist, then create one on demand.
@@ -411,5 +425,52 @@ export class Master {
     });
 
     return;
+  }
+
+  async onConnectionChange(
+    gameID: string,
+    playerID: string,
+    connected: boolean
+  ) {
+    const key = gameID;
+
+    let gameMetadata: Server.GameMetadata;
+    let filteredMetadata: FilteredMetadata;
+    let result: StorageAPI.FetchResult<{ metadata: true }>;
+    if (IsSynchronous(this.storageAPI)) {
+      result = this.storageAPI.fetch(key, { metadata: true });
+    } else {
+      result = await this.storageAPI.fetch(key, { metadata: true });
+    }
+    gameMetadata = result.metadata;
+
+    if (gameMetadata === undefined) {
+      logging.error(`metadata not found, gameID=[${key}]`);
+      return { error: 'metadata not found' };
+    }
+
+    if (gameMetadata.players[playerID] === undefined) {
+      logging.error(
+        `Player not in game, gameID=[${key}] playerID=[${playerID}]`
+      );
+      return { error: 'player not in game' };
+    }
+
+    gameMetadata.players[playerID].isConnected = connected;
+
+    filteredMetadata = Object.values(
+      gameMetadata.players
+    ).map(({ id, name, isConnected }) => ({ id, name, isConnected }));
+
+    this.transportAPI.sendAll(() => ({
+      type: 'metadata',
+      args: [gameID, filteredMetadata],
+    }));
+
+    if (IsSynchronous(this.storageAPI)) {
+      this.storageAPI.setMetadata(gameID, gameMetadata);
+    } else {
+      await this.storageAPI.setMetadata(gameID, gameMetadata);
+    }
   }
 }

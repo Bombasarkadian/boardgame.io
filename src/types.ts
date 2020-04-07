@@ -71,6 +71,8 @@ export interface Ctx {
   // "enhanced" context that has plugin api methods attached
   events?: EventsAPI;
   random?: RandomAPI;
+  // enhanced by gameMetadata
+  gameMetadata?: FilteredMetadata;
 }
 
 export interface PluginState {
@@ -269,6 +271,7 @@ export namespace Server {
     id: number;
     name?: string;
     credentials?: string;
+    isConnected?: boolean;
   };
 
   export interface GameMetadata {

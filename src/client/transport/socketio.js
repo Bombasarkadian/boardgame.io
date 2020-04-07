@@ -102,6 +102,13 @@ export class SocketIOTransport extends Transport {
       }
     });
 
+    // Called when new player joins the game
+    this.socket.on('metadata', (gameID, gameMetadata) => {
+      if (gameID == this.gameID) {
+        this.gameMetadataCallback(gameMetadata);
+      }
+    });
+
     // Initial sync to get game state.
     this.socket.emit('sync', this.gameID, this.playerID, this.numPlayers);
 
